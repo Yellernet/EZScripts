@@ -1,0 +1,171 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local EZScriptsFling = Instance.new("ScreenGui")
+local main = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local Box = Instance.new("TextBox")
+local Button = Instance.new("TextButton")
+local Drag = Instance.new('UIDragDetector',main)
+local function makeStroke(int)
+	local stroke = Instance.new('UIStroke',int)
+	stroke.Color = Color3.fromRGB(200,200,200)
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke.LineJoinMode = Enum.LineJoinMode.Round
+	stroke.Thickness = 5
+	stroke.Transparency = 0
+	stroke.Enabled = true
+end
+--Properties:
+makeStroke(Button)
+makeStroke(Title)
+makeStroke(main)
+EZScriptsFling.Name = "EZScriptsFling"
+EZScriptsFling.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+EZScriptsFling.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+main.Name = "main"
+main.Parent = EZScriptsFling
+main.BackgroundColor3 = Color3.fromRGB(54, 54, 54)
+main.BorderColor3 = Color3.fromRGB(0, 0, 0)
+main.BorderSizePixel = 0
+main.Position = UDim2.new(0.526070058, 0, 0.225694448, 0)
+main.Size = UDim2.new(0, 313, 0, 225)
+
+Title.Name = "Title"
+Title.Parent = main
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1.000
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Position = UDim2.new(0, 0, 0.0933333337, 0)
+Title.Size = UDim2.new(1, 0, 0.200000003, 0)
+Title.Font = Enum.Font.Unknown
+Title.Text = "EZScripts | Fling"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.TextSize = 14.000
+Title.TextWrapped = true
+
+Box.Name = "Box"
+Box.Parent = main
+Box.BackgroundColor3 = Color3.fromRGB(95, 95, 95)
+Box.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Box.BorderSizePixel = 0
+Box.Position = UDim2.new(0.148762375, 0, 0.36722222, 0)
+Box.Size = UDim2.new(0.699999928, 0, 0.3661111, 0)
+Box.Font = Enum.Font.TitilliumWeb
+Box.PlaceholderText = "(PLAYER NAME, CAN BE SHORTENED)"
+Box.Text = ""
+Box.TextColor3 = Color3.fromRGB(255, 255, 255)
+Box.TextScaled = true
+Box.TextSize = 14.000
+Box.TextWrapped = true
+
+Button.Name = "Button"
+Button.Parent = main
+Button.BackgroundColor3 = Color3.fromRGB(95, 95, 95)
+Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Button.BorderSizePixel = 0
+Button.Position = UDim2.new(0.259745538, 0, 0.796180546, 0)
+Button.Size = UDim2.new(0.47795549, 0, 0.200000003, 0)
+Button.Font = Enum.Font.SourceSansBold
+Button.Text = "FLING"
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.TextScaled = true
+Button.TextSize = 14.000
+Button.TextWrapped = true
+
+-- Scripts:
+
+ 
+	local script = Instance.new('LocalScript', Button)
+
+	-- SCRIPT FOR FLING PLAYER UNIVERSAL SCRIPT. CREDIT TO ALUGPL
+	-- PLAYER NAME'S CAN BE SHORTENED
+	
+	-- References
+	local main = script.Parent.Parent
+	local Textbox = main.Box
+	local button = script.Parent
+	local Players = game:GetService("Players")
+	local LocalPlayer = Players.LocalPlayer
+	local lp = LocalPlayer
+	local TextBox = main.Box
+	
+	-- Function to find player by shortened name
+	local function findPlayerByShortName(partialName)
+		partialName = partialName:lower()
+		for _, player in ipairs(Players:GetPlayers()) do
+			if player.Name:lower():sub(1, #partialName) == partialName then
+				return player
+			end
+		end
+		return nil
+	end
+	local function gplr(String)
+		local Found = {}
+		local strl = String:lower()
+		if strl == "all" then
+			for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+				table.insert(Found,v)
+			end
+		elseif strl == "others" then
+			for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+				if v.Name ~= lp.Name then
+					table.insert(Found,v)
+				end
+			end 
+		elseif strl == "me" then
+			for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+				if v.Name == lp.Name then
+					table.insert(Found,v)
+				end
+			end 
+		else
+			for i,v in pairs(game:FindService("Players"):GetPlayers()) do
+				if v.Name:lower():sub(1, #String) == String:lower() then
+					table.insert(Found,v)
+				end
+			end 
+		end
+		return Found 
+	end
+	-- Teleport function
+	local function teleportToPlayer()
+		local targetName = Textbox.Text
+		if targetName == "" then return end
+	
+		local targetPlayer = findPlayerByShortName(targetName)
+	
+		if targetPlayer and targetPlayer.Character and targetPlayer.Character.PrimaryPart then
+			local char = LocalPlayer.Character
+			if char and char.PrimaryPart then
+				char:PivotTo(targetPlayer.Character:GetPivot())
+				
+			end
+		else
+			warn("Target player not found or character not ready.")
+		end
+		local Target = gplr(TextBox.Text)
+		if Target[1] then
+			Target = Target[1]
+	
+			local Thrust = Instance.new('BodyThrust', lp.Character.HumanoidRootPart)
+			Thrust.Force = Vector3.new(99999,99999,99999)
+			Thrust.Name = "YeetForce"
+			repeat
+				lp.Character.HumanoidRootPart.CFrame = Target.Character.HumanoidRootPart.CFrame
+				Thrust.Location = Target.Character.HumanoidRootPart.Position
+				game:FindService("RunService").Heartbeat:wait()
+			until not Target.Character:FindFirstChild("Head")
+		else
+			
+		end
+	end
+	
+	-- Connect button click
+	button.MouseButton1Click:Connect(teleportToPlayer)
+	
